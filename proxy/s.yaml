@@ -1,0 +1,36 @@
+edition: 3.0.0
+name: clash-config-proxy
+access: 'clashconfig'
+
+vars:
+  region: 'cn-hangzhou'
+
+resources:
+  clash-config-proxy:
+    component: fc3
+    props:
+      region: ${vars.region}
+      functionName: 'clash-config-proxy'
+      description: 'The proxy server for Clash Config'
+      runtime: 'nodejs20'
+      code: ./dist
+      handler: index.handler
+      memorySize: 1024
+      timeout: 300
+      logConfig:
+        enableRequestMetrics: true
+        enableInstanceMetrics: true
+        logBeginRule: DefaultRegex
+        project: serverless-cn-hangzhou-d6544060-ac48-577a-9d38-38820e121b4f
+        enableCustomExtraLog: true
+        logstore: default-logs
+      environmentVariables:
+        AUTH_TOKEN: ${env(AUTH_TOKEN)}
+      triggers:
+        - triggerName: httpTrigger
+          triggerType: http
+          triggerConfig:
+            authType: anonymous
+            disableURLInternet: false
+            methods:
+              - GET
